@@ -115,6 +115,18 @@ void random_placement(netlist &mynet){
 }
 
 
+void BinaryGrid(const netlist &mynet){
+    for(int i = 0; i < mynet.rows; ++i){
+        for(int j = 0; j < mynet.cols; ++j){
+            if(mynet.Floorplan[i][j] == -1)
+                cout<<1;
+            else cout<<0;
+        }
+        cout<<"\n";
+    }
+}
+
+
 int TWL(netlist &mynet){
     int min_x = INT_MAX, min_y = INT_MAX;
     int max_x = INT_MIN, max_y = INT_MIN;
@@ -257,7 +269,8 @@ int partial_TWL(const netlist &oldnet, const netlist &newnet, int c1, int c2){
 void SA(netlist &mynet, double cooling_rate){
 
     double initial_cost = TWL(mynet);
-    cout<<initial_cost;
+    cout<<"Total wire length = "<<initial_cost<<"\n";
+    int final_twl = initial_cost;
     double T = 500 * initial_cost;
     double final_T = 5*0.00001*initial_cost / mynet.num_nets;
     double L1 = initial_cost, L2;
@@ -304,20 +317,38 @@ void SA(netlist &mynet, double cooling_rate){
             if(replace){
                 mynet = temp;
                 L1 = L2;
+                final_twl += delta_L;
             }
         }
 
         T *= cooling_rate;
     }
-    cout<<"\n"<<TWL(mynet)<<"\n";
+
+    cout<<"\n---After SA---\n";
+    BinaryGrid(mynet);
+    cout<<"Placement: \n";
+    for(int i = 0; i < mynet.rows; ++i){
+        for(int j = 0; j < mynet.cols; ++j){
+            if(mynet.Floorplan[i][j] == -1)
+                cout<<"--\t";
+            else cout<<mynet.Floorplan[i][j]<<"\t";
+        }
+        cout<<"\n";
+    }  
+    cout<<"Total wire length = "<<final_twl<<"\n";
+  
 }
+
 
 
 int main(){
     string filepath = "d0.txt";
-    // cin>>filepath;
+    cin>>filepath;
     netlist mynet = parse_netlist(filepath);
     random_placement(mynet);
+    cout<<"\n---Before SA---\n";
+    BinaryGrid(mynet);
+    cout<<"Placement: \n";
     for(int i = 0; i < mynet.rows; ++i){
         for(int j = 0; j < mynet.cols; ++j){
             if(mynet.Floorplan[i][j] == -1)
@@ -327,13 +358,6 @@ int main(){
     cout<<"\n";
     }
 
+
     SA(mynet, 0.95);
-    for(int i = 0; i < mynet.rows; ++i){
-        for(int j = 0; j < mynet.cols; ++j){
-            if(mynet.Floorplan[i][j] == -1)
-                cout<<"--\t";
-            else cout<<mynet.Floorplan[i][j]<<"\t";
-        }
-    cout<<"\n";
-    }
 }
