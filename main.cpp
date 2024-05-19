@@ -340,18 +340,15 @@ void SA(netlist &mynet, double cooling_rate){
         T *= cooling_rate;
     }
 
-    ofstream ff;
-    ff.open("trace.txt");
     cout<<"\n---After SA---\n";
     BinaryGrid(mynet);
-    cout<<"Placement: \n";
+    cout<<" Placement: \n";
     for(int i = 0; i < mynet.rows; ++i){
         for(int j = 0; j < mynet.cols; ++j){
             if(mynet.Floorplan[i][j] == -1)
-                ff<<"--\t";
-            else ff<<mynet.Floorplan[i][j]<<"\t";
-        }
-        ff<<"\n";
+                cout<<setw(3)<<" -- ";
+            else cout<<setw(3)<<mynet.Floorplan[i][j]<<" ";}
+        cout<<"\n";
     }  
     cout<<"Total wire length = "<<final_twl<<"\n";
   
@@ -363,19 +360,22 @@ int main(){
     string filepath = "d0.txt";
     cin>>filepath;
     netlist mynet = parse_netlist(filepath);
+    auto start = chrono::high_resolution_clock::now();
     random_placement(mynet);
     cout<<"\n---Before SA---\n";
     BinaryGrid(mynet);
-    cout<<"Placement: \n";
+    cout<<" Placement: \n";
     for(int i = 0; i < mynet.rows; ++i){
         for(int j = 0; j < mynet.cols; ++j){
             if(mynet.Floorplan[i][j] == -1)
-                cout<<"--\t";
-            else cout<<mynet.Floorplan[i][j]<<"\t";
+                cout<<setw(3)<<" -- ";
+            else cout<<setw(3)<<mynet.Floorplan[i][j]<<" ";
         }
     cout<<"\n";
     }
-
-
     SA(mynet, 0.95);
+    
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> duration = end - start;
+    cout << "Time taken by function: " << duration.count() << " seconds" << endl;
 }
