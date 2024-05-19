@@ -147,11 +147,114 @@ int TWL(netlist &mynet){
 }
 
 
+int partial_TWL(const netlist &oldnet, const netlist &newnet, int c1, int c2){
+    int min_x = INT_MAX, min_y = INT_MAX;
+    int max_x = INT_MIN, max_y = INT_MIN;
+    int x, y, cell, sum = 0;
+
+    int old_min_x = INT_MAX, old_min_y = INT_MAX;
+    int old_max_x = INT_MIN, old_max_y = INT_MIN;
+    int old_x, old_y, old_sum = 0;
+
+    vector<bool> updated(newnet.num_nets, false);
+    for(int i = 0; i < newnet.cell_nets[c1].size(); ++i){
+        int net = newnet.cell_nets[c1][i];
+        updated[net] = true;
+
+        min_x = INT_MAX; min_y = INT_MAX;
+        max_x = INT_MIN; max_y = INT_MIN;
+        old_min_x = INT_MAX; old_min_y = INT_MAX;
+        old_max_x = INT_MIN; old_max_y = INT_MIN;
+        
+        for(int j = 0; j < newnet.nets[net].size(); ++j){
+            cell = newnet.nets[net][j];
+            //placed_cells is index based, so we swap them
+            tie(y, x) = newnet.placed_cells[cell];
+            if(min_x > x){
+                min_x = x;
+            }
+            if(min_y > y){
+                min_y = y;
+            }
+            if(max_x < x){
+                max_x = x;
+            }
+            if(max_y < y){
+                max_y = y;
+            }
+
+            //old
+            tie(old_y, old_x) = oldnet.placed_cells[cell];
+            if(old_min_x > old_x){
+                old_min_x = old_x;
+            }
+            if(old_min_y > old_y){
+                old_min_y = old_y;
+            }
+            if(old_max_x < old_x){
+                old_max_x = old_x;
+            }
+            if(old_max_y < old_y){
+                old_max_y = old_y;
+            }
+        }
+        sum += (max_x - min_x + max_y - min_y);
+        old_sum += (old_max_x - old_min_x + old_max_y - old_min_y);
+    }
+
+    if(c2 != -1){
+        for(int i = 0; i < newnet.cell_nets[c2].size(); ++i){
+            int net = newnet.cell_nets[c2][i];
+            if(updated[net]) continue;
+            updated[net] = true;
+
+            min_x = INT_MAX; min_y = INT_MAX;
+            max_x = INT_MIN; max_y = INT_MIN;
+            old_min_x = INT_MAX; old_min_y = INT_MAX;
+            old_max_x = INT_MIN; old_max_y = INT_MIN;
+            
+            for(int j = 0; j < newnet.nets[net].size(); ++j){
+                cell = newnet.nets[net][j];
+                //placed_cells is index based, so we swap them
+                tie(y, x) = newnet.placed_cells[cell];
+                if(min_x > x){
+                    min_x = x;
+                }
+                if(min_y > y){
+                    min_y = y;
+                }
+                if(max_x < x){
+                    max_x = x;
+                }
+                if(max_y < y){
+                    max_y = y;
+                }
+
+                //old
+                tie(old_y, old_x) = oldnet.placed_cells[cell];
+                if(old_min_x > old_x){
+                    old_min_x = old_x;
+                }
+                if(old_min_y > old_y){
+                    old_min_y = old_y;
+                }
+                if(old_max_x < old_x){
+                    old_max_x = old_x;
+                }
+                if(old_max_y < old_y){
+                    old_max_y = old_y;
+                }
+            }
+            sum += (max_x - min_x + max_y - min_y);
+            old_sum += (old_max_x - old_min_x + old_max_y - old_min_y);
+        }
+    }
+
+    return sum - old_sum;
+}
+
+
 void SA(netlist &mynet, double cooling_rate){
-    random_device rd;
-    mt19937 generator(rd());
-    uniform_int_distribution<int> probDistribution(0, 100);
-    
 
     double initial_cost = TWL(mynet);
     cout<<initial_cost;
@@ -189,8 +292,11 @@ void SA(netlist &mynet, double cooling_rate){
                     break;
                 }
             }
-            L2 = TWL(temp);
-            delta_L = L2 - L1;
+
+            delta_L = partial_TWL(mynet, temp, cell1, cell2);
+            L2 = L1 + delta_L;
+            // L2 = TWL(temp);
+            // delta_L = L2 - L1;
             double random_number = static_cast < double > (rand()) / RAND_MAX;
             double e = 1 - exp( (-delta_L) / T);
             bool replace = (L2 <= L1 || e < random_number); 
@@ -208,7 +314,7 @@ void SA(netlist &mynet, double cooling_rate){
 
 
 int main(){
-    string filepath = "d3.txt";
+    string filepath = "d0.txt";
     // cin>>filepath;
     netlist mynet = parse_netlist(filepath);
     random_placement(mynet);
