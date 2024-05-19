@@ -267,21 +267,6 @@ int partial_TWL(const netlist &oldnet, const netlist &newnet, int c1, int c2){
 }
 
 
-void to_csv(string filename, const vector<float>& one, const vector<float>& two, const vector<float>& three, const vector<float>& four) {
-    ofstream csv;
-    csv.open(filename);
-    csv << "T, TWL\n";
-
-    // Write data row by row
-    int j = 100;
-    for (size_t i = 0; i < one.size(); ++i) {
-        csv << j<<","<<one[i] <<","<< two[i]<<","<< three[i] << "," << four[i] << "\n";
-        j+=100;
-    }
-    csv.close();
-}
-
-
 void SA(netlist &mynet, double cooling_rate){
 
     double initial_cost = TWL(mynet);
@@ -291,11 +276,11 @@ void SA(netlist &mynet, double cooling_rate){
     double final_T = 5*0.00001*initial_cost / mynet.num_nets;
     double L1 = initial_cost, L2;
     double prob, diff, delta_L;
-    netlist temp;
+    netlist temp = mynet;
     int cell1, cell2, x1, y1, x2, y2;
     while(T > final_T){
         for(int i = 0; i < 20*mynet.num_cells; ++i){
-            temp = mynet;
+            // temp. = mynet;
             //swap logic
             cell1 = rand() % temp.num_cells;
             tie(x1, y1) = temp.placed_cells[cell1];
@@ -331,27 +316,42 @@ void SA(netlist &mynet, double cooling_rate){
             bool replace = (L2 <= L1 || e < random_number); 
 
             if(replace){
-                mynet = temp;
+                // mynet = temp;
+                mynet.Floorplan[x1][y1] = cell2;
+                mynet.Floorplan[x2][y2] = cell1;
+
+                mynet.placed_cells[cell1] = {x2, y2};
+                if(cell2 != -1)
+                    mynet.placed_cells[cell2] = {x1, y1}; 
+
                 L1 = L2;
                 final_twl += delta_L;
+            }
+            else{
+                temp.Floorplan[x1][y1] = cell1;
+                temp.Floorplan[x2][y2] = cell2;
+
+                temp.placed_cells[cell1] = {x1, y1};
+                if(cell2 != -1)
+                    temp.placed_cells[cell2] = {x2, y2};                 
             }
         }
 
         T *= cooling_rate;
     }
 
-    // ofstream ff;
-    // ff.open("trace.txt");
+    ofstream ff;
+    ff.open("trace.txt");
     cout<<"\n---After SA---\n";
     BinaryGrid(mynet);
     cout<<"Placement: \n";
     for(int i = 0; i < mynet.rows; ++i){
         for(int j = 0; j < mynet.cols; ++j){
             if(mynet.Floorplan[i][j] == -1)
-                cout<<"--\t";
-            else cout<<mynet.Floorplan[i][j]<<"\t";
+                ff<<"--\t";
+            else ff<<mynet.Floorplan[i][j]<<"\t";
         }
-        cout<<"\n";
+        ff<<"\n";
     }  
     cout<<"Total wire length = "<<final_twl<<"\n";
   
