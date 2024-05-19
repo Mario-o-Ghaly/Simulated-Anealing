@@ -283,6 +283,9 @@ void to_csv(string filename, const vector<float>& one, const vector<float>& two,
 
 
 void SA(netlist &mynet, double cooling_rate){
+    ofstream csv;
+    csv.open("d0.csv");
+    csv << "T, TWL\n";
 
     double initial_cost = TWL(mynet);
     cout<<"Total wire length = "<<initial_cost<<"\n";
@@ -293,6 +296,8 @@ void SA(netlist &mynet, double cooling_rate){
     double prob, diff, delta_L;
     netlist temp;
     int cell1, cell2, x1, y1, x2, y2;
+
+    csv << T << "," << initial_cost<<"\n";
     while(T > final_T){
         for(int i = 0; i < 20*mynet.num_cells; ++i){
             temp = mynet;
@@ -338,6 +343,7 @@ void SA(netlist &mynet, double cooling_rate){
         }
 
         T *= cooling_rate;
+        csv << T << "," << final_twl<<"\n";
     }
 
     // ofstream ff;
@@ -354,9 +360,7 @@ void SA(netlist &mynet, double cooling_rate){
         cout<<"\n";
     }  
     cout<<"Total wire length = "<<final_twl<<"\n";
-  
 }
-
 
 
 int main(){
