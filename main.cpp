@@ -171,6 +171,7 @@ int partial_TWL(const netlist &oldnet, const netlist &newnet, int c1, int c2){
     vector<bool> updated(newnet.num_nets, false);
     for(int i = 0; i < newnet.cell_nets[c1].size(); ++i){
         int net = newnet.cell_nets[c1][i];
+        if(updated[net]) continue;
         updated[net] = true;
 
         min_x = INT_MAX; min_y = INT_MAX;
@@ -266,6 +267,21 @@ int partial_TWL(const netlist &oldnet, const netlist &newnet, int c1, int c2){
 }
 
 
+void to_csv(string filename, const vector<float>& one, const vector<float>& two, const vector<float>& three, const vector<float>& four) {
+    ofstream csv;
+    csv.open(filename);
+    csv << "T, TWL\n";
+
+    // Write data row by row
+    int j = 100;
+    for (size_t i = 0; i < one.size(); ++i) {
+        csv << j<<","<<one[i] <<","<< two[i]<<","<< three[i] << "," << four[i] << "\n";
+        j+=100;
+    }
+    csv.close();
+}
+
+
 void SA(netlist &mynet, double cooling_rate){
 
     double initial_cost = TWL(mynet);
@@ -324,6 +340,8 @@ void SA(netlist &mynet, double cooling_rate){
         T *= cooling_rate;
     }
 
+    // ofstream ff;
+    // ff.open("trace.txt");
     cout<<"\n---After SA---\n";
     BinaryGrid(mynet);
     cout<<"Placement: \n";
