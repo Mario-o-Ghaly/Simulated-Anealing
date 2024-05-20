@@ -4,9 +4,9 @@ This project implements a simulated annealing algorithm to optimize the placemen
 
 ## Table of Contents
 - [Introduction](#introduction)
+- [Requirements](#Requirements)
 - [Features](#features)
 - [Installation](#installation)
-- [Requirements](#Requirements)
 - [Usage](#usage)
 - [Graph Analysis](#graph-analysis)
 - [Contributing](#contributing)
