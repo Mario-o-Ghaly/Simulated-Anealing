@@ -32,6 +32,7 @@ Simulated annealing is a probabilistic technique used for finding an approximate
    cd Simulated-Anealing
 
 2. **Compile the code**
+   ```sh
    Ensure you have a C++ compiler installed (e.g., g++). Compile the code using:
    g++ -o exec main.cpp
 
