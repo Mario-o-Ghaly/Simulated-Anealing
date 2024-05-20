@@ -6,6 +6,7 @@ This project implements a simulated annealing algorithm to optimize the placemen
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
+- [Requirements](#Requirements)
 - [Usage](#usage)
 - [Graph Analysis](#graph-analysis)
 - [Contributing](#contributing)
@@ -14,6 +15,11 @@ This project implements a simulated annealing algorithm to optimize the placemen
 ## Introduction
 
 Simulated annealing is a probabilistic technique used for finding an approximate solution to an optimization problem. In this project, simulated annealing is used to optimize the placement of cells on a grid to minimize the total wire length (TWL) in the design.
+
+## Requirements
+- C++ compiler supporting C++11 or later
+- CImg library for image handling
+- A text file containing the netlist information in a specified format
 
 ## Features
 
@@ -57,9 +63,6 @@ Simulated annealing is a probabilistic technique used for finding an approximate
    To analyze the effect of cooling rate on TWL, we ran the simulated annealing algorithm with different cooling rates across 5 different designs. The results are plotted in the graph TWL_vs_CoolingRate.png.
    
    These graphs are included in the graphs directory of the project.
-
-5. GIF
-   To run the GIF simulation do the following:
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
