@@ -51,12 +51,15 @@ Simulated annealing is a probabilistic technique used for finding an approximate
 
 4. Graph Analysis
    TWL vs. Temperature
-   To analyze the effect of initial temperature on TWL, we ran the simulated annealing algorithm with different initial temperatures across 5 different designs. The results are plotted in the graph TWL_vs_Temperature.png.
+   To analyze how the total wire length changes in relation to the Temperature, we ran the simulated annealing algorithm across 5 different designs with outputting the final TWL at each T increment/decrement to have 5 different graphs. The results are plotted in the graph TWL_vs_Temperature.png.
 
    TWL vs. Cooling Rate
    To analyze the effect of cooling rate on TWL, we ran the simulated annealing algorithm with different cooling rates across 5 different designs. The results are plotted in the graph TWL_vs_CoolingRate.png.
    
    These graphs are included in the graphs directory of the project.
+
+5. GIF
+   To run the GIF simulation do the following:
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
